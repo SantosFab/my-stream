@@ -2,11 +2,10 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { getMovieDetails, getImageUrl } from "@/lib/tmdb"
 import { VideoPlayer } from "@/components/video-player"
-import { Badge } from "@workspace/ui/components/badge"
-import { buttonVariants } from "@workspace/ui/components/button-variants"
+import { Badge, buttonVariants } from "@/components/ui"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowLeft01Icon, StarIcon, Clock01Icon } from "@hugeicons/core-free-icons"
-import { cn } from "@workspace/ui/lib/utils"
+import { cn } from "@/lib/utils"
 import Image from "next/image"
 
 type WatchMoviePageProps = {

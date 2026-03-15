@@ -22,6 +22,11 @@ export function SeasonEpisodeLoader({
   const [, startTransition] = useTransition()
 
   useEffect(() => {
+    setSelectedSeason(initialSeasonNumber)
+    setEpisodes(initialEpisodes)
+  }, [initialSeasonNumber, initialEpisodes])
+
+  useEffect(() => {
     if (selectedSeason === initialSeasonNumber) {
       setEpisodes(initialEpisodes)
       return
@@ -40,7 +45,8 @@ export function SeasonEpisodeLoader({
     <SeasonSelector
       tvId={tvId}
       seasons={seasons}
-      initialSeason={selectedSeason}
+      selectedSeason={selectedSeason}
+      onSeasonChange={setSelectedSeason}
       episodes={episodes}
     />
   )

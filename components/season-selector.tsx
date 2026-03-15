@@ -1,41 +1,54 @@
 "use client"
-
-import { useState } from "react"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@workspace/ui/components/select"
-import { buttonVariants } from "@workspace/ui/components/button-variants"
+} from "@/components/ui"
+import { buttonVariants } from "@/components/ui"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { PlayIcon, StarIcon } from "@hugeicons/core-free-icons"
 import Image from "next/image"
 import Link from "next/link"
 import { getImageUrl } from "@/lib/tmdb"
-import { cn } from "@workspace/ui/lib/utils"
+import { cn } from "@/lib/utils"
 import type { Season, Episode } from "@/lib/types"
 
 type SeasonSelectorProps = {
   tvId: number
   seasons: Season[]
-  initialSeason?: number
+  selectedSeason?: number
+  onSeasonChange?: (season: number) => void
   episodes?: Episode[]
 }
 
-export function SeasonSelector({ tvId, seasons, initialSeason = 1, episodes = [] }: SeasonSelectorProps) {
-  const [selectedSeason, setSelectedSeason] = useState<string | null>(String(initialSeason))
+export function SeasonSelector({
+  tvId,
+  seasons,
+  selectedSeason = 1,
+  onSeasonChange,
+  episodes = [],
+}: SeasonSelectorProps) {
+  const selectedSeasonValue = String(selectedSeason)
 
   const validSeasons = seasons.filter((s) => s.season_number > 0)
+  const selectedSeasonLabel = validSeasons.find(
+    (s) => String(s.season_number) === selectedSeasonValue
+  )
+    ? `Season ${selectedSeasonValue}`
+    : "Season"
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-3">
         <h2 className="text-lg font-semibold">Episodes</h2>
-        <Select value={selectedSeason} onValueChange={(v) => setSelectedSeason(v)}>
+        <Select
+          value={selectedSeasonValue}
+          onValueChange={(v) => onSeasonChange?.(Number(v))}
+        >
           <SelectTrigger className="w-40">
-            <SelectValue placeholder="Season" />
+            <SelectValue placeholder="Season">{selectedSeasonLabel}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             {validSeasons.map((s) => (
@@ -82,7 +95,7 @@ export function SeasonSelector({ tvId, seasons, initialSeason = 1, episodes = []
                   <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{ep.overview}</p>
                   <div className="mt-auto">
                     <Link
-                      href={`/watch/tv/${tvId}?season=${selectedSeason}&episode=${ep.episode_number}`}
+                      href={`/watch/tv/${tvId}?season=${selectedSeasonValue}&episode=${ep.episode_number}`}
                       className={cn(buttonVariants({ size: "sm" }), "gap-1.5 h-7 text-xs")}
                     >
                       <HugeiconsIcon icon={PlayIcon} strokeWidth={1.5} className="size-3" />

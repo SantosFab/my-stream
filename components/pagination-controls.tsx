@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter, useSearchParams } from "next/navigation"
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@/components/ui"
 
 type PaginationControlsProps = {
   currentPage: number

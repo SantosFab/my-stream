@@ -3,7 +3,7 @@ import Link from "next/link"
 import { getImageUrl } from "@/lib/tmdb"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { StarIcon } from "@hugeicons/core-free-icons"
-import { cn } from "@workspace/ui/lib/utils"
+import { cn } from "@/lib/utils"
 import type { Movie, TVShow } from "@/lib/types"
 
 type MediaCardProps = {

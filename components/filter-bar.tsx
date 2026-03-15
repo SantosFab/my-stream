@@ -1,14 +1,16 @@
 "use client"
 
 import { useRouter, useSearchParams } from "next/navigation"
-import { Tabs, TabsList, TabsTrigger } from "@workspace/ui/components/tabs"
 import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@workspace/ui/components/select"
+} from "@/components/ui"
 import type { Genre } from "@/lib/types"
 
 type Category = { value: string; label: string }
@@ -24,6 +26,9 @@ export function FilterBar({ categories, genres }: FilterBarProps) {
 
   const category = searchParams.get("category") ?? categories[0]!.value
   const genreId = searchParams.get("genre") ?? ""
+  const selectedGenreLabel = genreId
+    ? genres.find((g) => String(g.id) === genreId)?.name ?? "All Genres"
+    : "All Genres"
 
   function buildUrl(updates: Record<string, string | null>) {
     const params = new URLSearchParams(searchParams.toString())
@@ -60,7 +65,7 @@ export function FilterBar({ categories, genres }: FilterBarProps) {
         }
       >
         <SelectTrigger className="w-36">
-          <SelectValue placeholder="All Genres" />
+          <SelectValue placeholder="All Genres">{selectedGenreLabel}</SelectValue>
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All Genres</SelectItem>

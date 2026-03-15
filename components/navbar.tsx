@@ -3,8 +3,7 @@
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useState } from "react"
-import { Input } from "@workspace/ui/components/input"
-import { Button } from "@workspace/ui/components/button"
+import { Input, Button } from "@/components/ui"
 import { HugeiconsIcon } from "@hugeicons/react"
 import type { IconSvgElement } from "@hugeicons/react"
 import {
@@ -13,7 +12,7 @@ import {
   Film01Icon,
   Home01Icon,
 } from "@hugeicons/core-free-icons"
-import { cn } from "@workspace/ui/lib/utils"
+import { cn } from "@/lib/utils"
 
 export function Navbar() {
   const pathname = usePathname()

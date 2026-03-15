@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { MediaCard, MediaCardSkeleton } from "@/components/media-card"
-import { cn } from "@workspace/ui/lib/utils"
+import { cn } from "@/lib/utils"
 import type { Movie, TVShow, MediaType } from "@/lib/types"
 
 type MediaRowProps = {

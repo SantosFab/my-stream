@@ -2,13 +2,11 @@ import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getMovieDetails, getMovieCredits, getSimilarMovies, getImageUrl } from "@/lib/tmdb"
-import { Badge } from "@workspace/ui/components/badge"
-import { Separator } from "@workspace/ui/components/separator"
-import { buttonVariants } from "@workspace/ui/components/button-variants"
+import { Badge, Separator, buttonVariants } from "@/components/ui"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { PlayIcon, StarIcon, Clock01Icon, Calendar01Icon } from "@hugeicons/core-free-icons"
 import { MediaRow } from "@/components/media-row"
-import { cn } from "@workspace/ui/lib/utils"
+import { cn } from "@/lib/utils"
 
 type MoviePageProps = {
   params: Promise<{ id: string }>

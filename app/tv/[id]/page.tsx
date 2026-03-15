@@ -2,14 +2,12 @@ import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getTVDetails, getTVCredits, getSimilarTV, getTVSeason, getImageUrl } from "@/lib/tmdb"
-import { Badge } from "@workspace/ui/components/badge"
-import { Separator } from "@workspace/ui/components/separator"
-import { buttonVariants } from "@workspace/ui/components/button-variants"
+import { Badge, Separator, buttonVariants } from "@/components/ui"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { PlayIcon, StarIcon, Calendar01Icon } from "@hugeicons/core-free-icons"
 import { MediaRow } from "@/components/media-row"
 import { SeasonEpisodeLoader } from "@/components/season-episode-loader"
-import { cn } from "@workspace/ui/lib/utils"
+import { cn } from "@/lib/utils"
 
 type TVPageProps = {
   params: Promise<{ id: string }>

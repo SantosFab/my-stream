@@ -1,11 +1,10 @@
 import Image from "next/image"
 import Link from "next/link"
 import { getImageUrl } from "@/lib/tmdb"
-import { Badge } from "@workspace/ui/components/badge"
-import { buttonVariants } from "@workspace/ui/components/button-variants"
+import { Badge, buttonVariants } from "@/components/ui"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { PlayIcon, StarIcon, InformationCircleIcon } from "@hugeicons/core-free-icons"
-import { cn } from "@workspace/ui/lib/utils"
+import { cn } from "@/lib/utils"
 import type { Movie, TVShow, Genre } from "@/lib/types"
 
 function isMovie(item: Movie | TVShow): item is Movie {
@@ -22,7 +21,7 @@ export function HeroBanner({ item, type }: HeroBannerProps) {
   const backdropUrl = getImageUrl(item.backdrop_path, "original")
 
   return (
-    <div className="relative w-full overflow-hidden min-h-125">
+    <div className="relative w-full overflow-hidden min-h-[500px]">
       {backdropUrl && (
         <Image
           src={backdropUrl}
@@ -36,7 +35,7 @@ export function HeroBanner({ item, type }: HeroBannerProps) {
       <div className="absolute inset-0 bg-linear-to-r from-background via-background/80 to-transparent" />
       <div className="absolute inset-0 bg-linear-to-t from-background via-transparent to-transparent" />
 
-      <div className="relative z-10 mx-auto flex max-w-7xl flex-col justify-end gap-4 px-4 py-16 min-h-125">
+      <div className="relative z-10 mx-auto flex max-w-7xl flex-col justify-end gap-4 px-4 py-16 min-h-[500px] text-white">
         <div className="flex flex-wrap gap-2">
           {item.genres?.map((g: Genre) => (
             <Badge key={g.id} variant="secondary" className="text-xs">
