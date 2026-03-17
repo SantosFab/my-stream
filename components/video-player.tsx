@@ -7,10 +7,15 @@ type VideoPlayerProps =
 export function VideoPlayer({ type, id, season, episode }: VideoPlayerProps) {
   let src: string
 
+  // if (type === "movie") {
+  //   src = `https://vidlink.pro/movie/${id}`
+  // } else {
+  //   src = `https://vidlink.pro/tv/${id}/${season}/${episode}`
+  // }
   if (type === "movie") {
-    src = `https://vidlink.pro/movie/${id}`
+    src = `https://vsembed.ru//embed/movie/${id}`
   } else {
-    src = `https://vidlink.pro/tv/${id}/${season}/${episode}`
+    src = `https://vsembed.ru//embed/tv/${id}/${season}/${episode}`
   }
 
   return (
@@ -19,7 +24,6 @@ export function VideoPlayer({ type, id, season, episode }: VideoPlayerProps) {
         src={src}
         className="absolute inset-0 w-full h-full"
         allowFullScreen
-        allow="autoplay; fullscreen"
         referrerPolicy="origin"
         title="Video Player"
       />
