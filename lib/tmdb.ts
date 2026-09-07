@@ -189,28 +189,194 @@ export async function getTVGenres() {
 
 // ─── Discover ─────────────────────────────────────────────────────────────────
 
-export async function discoverMovies(params: {
+export const MOVIE_SORT_OPTIONS = [
+  "popularity.desc",
+  "popularity.asc",
+  "vote_average.desc",
+  "vote_average.asc",
+  "vote_count.desc",
+  "vote_count.asc",
+  "primary_release_date.desc",
+  "primary_release_date.asc",
+  "title.asc",
+  "title.desc",
+  "original_title.asc",
+  "original_title.desc",
+  "revenue.desc",
+  "revenue.asc",
+] as const
+
+export type MovieSort = (typeof MOVIE_SORT_OPTIONS)[number]
+
+export const TV_SORT_OPTIONS = [
+  "popularity.desc",
+  "popularity.asc",
+  "vote_average.desc",
+  "vote_average.asc",
+  "vote_count.desc",
+  "vote_count.asc",
+  "first_air_date.desc",
+  "first_air_date.asc",
+  "name.asc",
+  "name.desc",
+  "original_name.asc",
+  "original_name.desc",
+] as const
+
+export type TVSort = (typeof TV_SORT_OPTIONS)[number]
+
+export function isMovieSort(value: string | undefined): value is MovieSort {
+  return (MOVIE_SORT_OPTIONS as readonly string[]).includes(value ?? "")
+}
+
+export function isTVSort(value: string | undefined): value is TVSort {
+  return (TV_SORT_OPTIONS as readonly string[]).includes(value ?? "")
+}
+
+export interface DiscoverMovieParams {
   page?: number
-  genreId?: number
   sortBy?: string
-}) {
+  genreIds?: number[]
+  /** "and" joins with `,` (default), "or" joins with `|` */
+  genreMode?: "and" | "or"
+  year?: number
+  minRating?: number
+  runtimeGte?: number
+  runtimeLte?: number
+  lang?: string
+  country?: string
+  releaseType?: number
+}
+
+export interface DiscoverTVParams {
+  page?: number
+  sortBy?: string
+  genreIds?: number[]
+  /** "and" joins with `,` (default), "or" joins with `|` */
+  genreMode?: "and" | "or"
+  year?: number
+  minRating?: number
+  runtimeGte?: number
+  runtimeLte?: number
+  lang?: string
+  country?: string
+  status?: string
+  showType?: string
+}
+
+function sanitizeGenreIds(ids: number[] | undefined): number[] {
+  if (!ids) return []
+  return [...new Set(ids)].filter((id) => Number.isInteger(id) && id > 0)
+}
+
+function joinGenres(ids: number[] | undefined, mode: "and" | "or" | undefined): string | undefined {
+  const clean = sanitizeGenreIds(ids)
+  if (clean.length === 0) return undefined
+  return clean.join(mode === "or" ? "|" : ",")
+}
+
+/**
+ * Parse the `genres` URL param (comma = AND, pipe = OR) with fallback to the
+ * legacy single-id `genre` param. Used by both pages (server) and FilterBar.
+ */
+export function parseGenreFilter(
+  raw: string | null | undefined,
+  legacy: string | null | undefined
+): { ids: number[]; mode: "and" | "or" } {
+  const src = raw || legacy || ""
+  if (!src) return { ids: [], mode: "and" }
+  const mode = src.includes("|") ? "or" : "and"
+  const ids = [
+    ...new Set(
+      src
+        .split(/[|,]/)
+        .map((s) => Number(s.trim()))
+        .filter((n) => Number.isInteger(n) && n > 0)
+    ),
+  ]
+  return { ids, mode }
+}
+
+function sanitizeYear(year: number | undefined): string | undefined {
+  if (year === undefined || !Number.isInteger(year)) return undefined
+  if (year < 1900 || year > 2035) return undefined
+  return String(year)
+}
+
+function sanitizeRating(rating: number | undefined): string | undefined {
+  if (rating === undefined || Number.isNaN(rating)) return undefined
+  if (rating < 0 || rating > 10) return undefined
+  return String(rating)
+}
+
+function sanitizeRuntime(value: number | undefined): string | undefined {
+  if (value === undefined || !Number.isInteger(value)) return undefined
+  if (value < 0 || value > 1000) return undefined
+  return String(value)
+}
+
+export async function discoverMovies(params: DiscoverMovieParams) {
+  const sortBy = isMovieSort(params.sortBy) ? params.sortBy : "popularity.desc"
+  const usesRating =
+    sortBy.startsWith("vote_average") || params.minRating !== undefined
+  const withGenres = joinGenres(params.genreIds, params.genreMode)
+
   return fetcher<PaginatedResponse<Movie>>("/discover/movie", {
     page: String(params.page ?? 1),
-    sort_by: params.sortBy ?? "popularity.desc",
-    "vote_count.gte": "50",
-    ...(params.genreId ? { with_genres: String(params.genreId) } : {}),
+    sort_by: sortBy,
+    // Quality gate only for rating-based sorts/filters; otherwise it would
+    // hide unreleased or obscure titles (e.g. future years, upcoming sorts).
+    ...(usesRating ? { "vote_count.gte": "50" } : {}),
+    ...(withGenres ? { with_genres: withGenres } : {}),
+    ...(sanitizeYear(params.year)
+      ? { primary_release_year: sanitizeYear(params.year)! }
+      : {}),
+    ...(sanitizeRating(params.minRating)
+      ? { "vote_average.gte": sanitizeRating(params.minRating)! }
+      : {}),
+    ...(sanitizeRuntime(params.runtimeGte)
+      ? { "with_runtime.gte": sanitizeRuntime(params.runtimeGte)! }
+      : {}),
+    ...(sanitizeRuntime(params.runtimeLte)
+      ? { "with_runtime.lte": sanitizeRuntime(params.runtimeLte)! }
+      : {}),
+    ...(params.lang ? { with_original_language: params.lang } : {}),
+    ...(params.country ? { with_origin_country: params.country } : {}),
+    ...(params.releaseType !== undefined &&
+    Number.isInteger(params.releaseType) &&
+    params.releaseType >= 1 &&
+    params.releaseType <= 6
+      ? { with_release_type: String(params.releaseType) }
+      : {}),
   })
 }
 
-export async function discoverTV(params: {
-  page?: number
-  genreId?: number
-  sortBy?: string
-}) {
+export async function discoverTV(params: DiscoverTVParams) {
+  const sortBy = isTVSort(params.sortBy) ? params.sortBy : "popularity.desc"
+  const usesRating =
+    sortBy.startsWith("vote_average") || params.minRating !== undefined
+  const withGenres = joinGenres(params.genreIds, params.genreMode)
+
   return fetcher<PaginatedResponse<TVShow>>("/discover/tv", {
     page: String(params.page ?? 1),
-    sort_by: params.sortBy ?? "popularity.desc",
-    "vote_count.gte": "50",
-    ...(params.genreId ? { with_genres: String(params.genreId) } : {}),
+    sort_by: sortBy,
+    ...(usesRating ? { "vote_count.gte": "50" } : {}),
+    ...(withGenres ? { with_genres: withGenres } : {}),
+    ...(sanitizeYear(params.year)
+      ? { first_air_date_year: sanitizeYear(params.year)! }
+      : {}),
+    ...(sanitizeRating(params.minRating)
+      ? { "vote_average.gte": sanitizeRating(params.minRating)! }
+      : {}),
+    ...(sanitizeRuntime(params.runtimeGte)
+      ? { "with_runtime.gte": sanitizeRuntime(params.runtimeGte)! }
+      : {}),
+    ...(sanitizeRuntime(params.runtimeLte)
+      ? { "with_runtime.lte": sanitizeRuntime(params.runtimeLte)! }
+      : {}),
+    ...(params.lang ? { with_original_language: params.lang } : {}),
+    ...(params.country ? { with_origin_country: params.country } : {}),
+    ...(params.status ? { with_status: params.status } : {}),
+    ...(params.showType ? { with_type: params.showType } : {}),
   })
 }
