@@ -4,6 +4,7 @@ import { getImageUrl } from "@/lib/tmdb"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { StarIcon } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
+import { FavoriteHeartButton } from "@/components/favorite-heart-button"
 import type { Movie, TVShow } from "@/lib/types"
 
 type MediaCardProps = {
@@ -31,6 +32,12 @@ export function MediaCard({ item, type, className }: MediaCardProps) {
       )}
     >
       <div className="relative aspect-2/3 w-full overflow-hidden bg-muted">
+        <FavoriteHeartButton
+          type={type}
+          id={item.id}
+          title={title}
+          className="absolute right-1.5 top-1.5 z-10"
+        />
         {imageUrl ? (
           <Image
             src={imageUrl}

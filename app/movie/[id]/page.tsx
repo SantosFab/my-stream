@@ -1,11 +1,14 @@
 import Image from "next/image"
 import { notFound } from "next/navigation"
-import { getMovieDetails, getMovieCredits, getSimilarMovies, getImageUrl } from "@/lib/tmdb"
+import { getMovieDetails, getMovieCredits, getSimilarMovies, getMovieRecommendations, getMovieVideos, getMovieReviews, getCollection, getImageUrl } from "@/lib/tmdb"
 import { Badge, Separator } from "@/components/ui"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { StarIcon, Clock01Icon, Calendar01Icon } from "@hugeicons/core-free-icons"
 import { MediaRow } from "@/components/media-row"
 import { ResumeWatchButton } from "@/components/resume-watch-button"
+import { AccountToggles } from "@/components/account-toggles"
+import { TrailerDialog } from "@/components/trailer-dialog"
+import { ReviewsSection } from "@/components/reviews-section"
 
 type MoviePageProps = {
   params: Promise<{ id: string }>
@@ -16,13 +19,20 @@ export default async function MoviePage({ params }: MoviePageProps) {
   const movieId = Number(id)
   if (isNaN(movieId)) notFound()
 
-  const [movie, credits, similar] = await Promise.all([
+  const [movie, credits, similar, videos, recommendations, reviews] = await Promise.all([
     getMovieDetails(movieId).catch(() => null),
     getMovieCredits(movieId).catch(() => ({ cast: [] })),
     getSimilarMovies(movieId).catch(() => ({ results: [] })),
+    getMovieVideos(movieId).catch(() => ({ results: [] })),
+    getMovieRecommendations(movieId).catch(() => ({ results: [] })),
+    getMovieReviews(movieId).catch(() => ({ results: [], page: 1, total_pages: 0, total_results: 0 })),
   ])
 
   if (!movie) notFound()
+
+  const collection = movie.belongs_to_collection
+    ? await getCollection(movie.belongs_to_collection.id).catch(() => null)
+    : null
 
   const backdropUrl = getImageUrl(movie.backdrop_path, "original")
   const posterUrl = getImageUrl(movie.poster_path, "w342")
@@ -88,6 +98,10 @@ export default async function MoviePage({ params }: MoviePageProps) {
               id={movie.id}
               defaultHref={`/watch/movie/${movie.id}`}
             />
+            <div className="flex flex-wrap items-center gap-2">
+              <TrailerDialog videos={videos.results} />
+            </div>
+            <AccountToggles type="movie" id={movie.id} />
           </div>
         </div>
 
@@ -120,6 +134,31 @@ export default async function MoviePage({ params }: MoviePageProps) {
           <>
             <Separator className="my-8" />
             <MediaRow title="Similar Movies" items={similar.results} type="movie" />
+          </>
+        )}
+
+        {collection && collection.parts.length > 0 && (
+          <>
+            <Separator className="my-8" />
+            <MediaRow
+              title={`More From ${collection.name}`}
+              items={collection.parts}
+              type="movie"
+            />
+          </>
+        )}
+
+        {recommendations.results.length > 0 && (
+          <>
+            <Separator className="my-8" />
+            <MediaRow title="You May Also Like" items={recommendations.results} type="movie" />
+          </>
+        )}
+
+        {reviews.results.length > 0 && (
+          <>
+            <Separator className="my-8" />
+            <ReviewsSection reviews={reviews.results} />
           </>
         )}
       </div>

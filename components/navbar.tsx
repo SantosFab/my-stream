@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useState } from "react"
 import { Input, Button } from "@/components/ui"
+import { TmdbAuthButton } from "@/components/tmdb-auth-button"
 import { HugeiconsIcon } from "@hugeicons/react"
 import type { IconSvgElement } from "@hugeicons/react"
 import {
@@ -77,6 +78,8 @@ export function Navbar() {
             Search
           </Button>
         </form>
+
+        <TmdbAuthButton />
 
         <nav className="flex md:hidden items-center gap-1 ml-2">
           {links.map(({ href, icon }) => (

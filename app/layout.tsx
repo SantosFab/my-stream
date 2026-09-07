@@ -2,6 +2,7 @@ import { Geist_Mono, Inter } from "next/font/google"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
+import { FavoritesProvider } from "@/components/favorites-provider"
 import { Navbar } from "@/components/navbar"
 import { cn } from "@/lib/utils"
 
@@ -30,8 +31,10 @@ export default function RootLayout({
     >
       <body>
         <ThemeProvider>
-          <Navbar />
-          {children}
+          <FavoritesProvider>
+            <Navbar />
+            {children}
+          </FavoritesProvider>
         </ThemeProvider>
       </body>
     </html>

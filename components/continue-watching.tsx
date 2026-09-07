@@ -12,6 +12,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Cancel01Icon, PlayIcon } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
+import { FavoriteHeartButton } from "@/components/favorite-heart-button"
 
 function ContinueCard({
   item,
@@ -42,6 +43,12 @@ function ContinueCard({
           </div>
         )}
         <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent" />
+        <FavoriteHeartButton
+          type={item.type}
+          id={item.id}
+          title={title}
+          className="absolute right-10 top-1.5 z-10"
+        />
         {item.type === "tv" && (
           <span className="absolute left-2 top-2 rounded-md bg-primary px-1.5 py-0.5 text-[11px] font-semibold text-primary-foreground">
             S{item.season} E{item.episode}

@@ -1,12 +1,15 @@
 import Image from "next/image"
 import { notFound } from "next/navigation"
-import { getTVDetails, getTVCredits, getSimilarTV, getTVSeason, getImageUrl } from "@/lib/tmdb"
+import { getTVDetails, getTVCredits, getSimilarTV, getTVSeason, getTVRecommendations, getTVVideos, getTVReviews, getImageUrl } from "@/lib/tmdb"
 import { Badge, Separator } from "@/components/ui"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { StarIcon, Calendar01Icon } from "@hugeicons/core-free-icons"
 import { MediaRow } from "@/components/media-row"
 import { SeasonEpisodeLoader } from "@/components/season-episode-loader"
 import { ResumeWatchButton } from "@/components/resume-watch-button"
+import { AccountToggles } from "@/components/account-toggles"
+import { TrailerDialog } from "@/components/trailer-dialog"
+import { ReviewsSection } from "@/components/reviews-section"
 
 type TVPageProps = {
   params: Promise<{ id: string }>
@@ -17,10 +20,13 @@ export default async function TVDetailPage({ params }: TVPageProps) {
   const tvId = Number(id)
   if (isNaN(tvId)) notFound()
 
-  const [tv, credits, similar] = await Promise.all([
+  const [tv, credits, similar, videos, recommendations, reviews] = await Promise.all([
     getTVDetails(tvId).catch(() => null),
     getTVCredits(tvId).catch(() => ({ cast: [] })),
     getSimilarTV(tvId).catch(() => ({ results: [] })),
+    getTVVideos(tvId).catch(() => ({ results: [] })),
+    getTVRecommendations(tvId).catch(() => ({ results: [] })),
+    getTVReviews(tvId).catch(() => ({ results: [], page: 1, total_pages: 0, total_results: 0 })),
   ])
 
   if (!tv) notFound()
@@ -84,6 +90,10 @@ export default async function TVDetailPage({ params }: TVPageProps) {
                 defaultHref={`/watch/tv/${tv.id}?season=${firstSeason.season_number}&episode=1`}
               />
             )}
+            <div className="flex flex-wrap items-center gap-2">
+              <TrailerDialog videos={videos.results} />
+            </div>
+            <AccountToggles type="tv" id={tv.id} />
           </div>
         </div>
 
@@ -128,6 +138,20 @@ export default async function TVDetailPage({ params }: TVPageProps) {
           <>
             <Separator className="my-8" />
             <MediaRow title="Similar Shows" items={similar.results} type="tv" />
+          </>
+        )}
+
+        {recommendations.results.length > 0 && (
+          <>
+            <Separator className="my-8" />
+            <MediaRow title="You May Also Like" items={recommendations.results} type="tv" />
+          </>
+        )}
+
+        {reviews.results.length > 0 && (
+          <>
+            <Separator className="my-8" />
+            <ReviewsSection reviews={reviews.results} />
           </>
         )}
       </div>

@@ -8,6 +8,9 @@ import type {
   VideosResponse,
   CreditsResponse,
   SearchResult,
+  ReviewsResponse,
+  Collection,
+  ImagesResponse,
 } from "./types"
 
 const BASE_URL = "https://api.themoviedb.org/3"
@@ -81,6 +84,24 @@ export async function getSimilarMovies(id: number) {
   return fetcher<PaginatedResponse<Movie>>(`/movie/${id}/similar`)
 }
 
+export async function getMovieRecommendations(id: number) {
+  return fetcher<PaginatedResponse<Movie>>(`/movie/${id}/recommendations`)
+}
+
+export async function getMovieReviews(id: number) {
+  return fetcher<ReviewsResponse>(`/movie/${id}/reviews`)
+}
+
+export async function getCollection(id: number) {
+  return fetcher<Collection>(`/collection/${id}`)
+}
+
+export async function getMovieImages(id: number) {
+  return fetcher<ImagesResponse>(`/movie/${id}/images`, {
+    include_image_language: "en,null",
+  })
+}
+
 // ─── TV Shows ─────────────────────────────────────────────────────────────────
 
 export async function getTrendingTV(timeWindow: "day" | "week" = "week") {
@@ -113,6 +134,20 @@ export async function getTVCredits(id: number) {
 
 export async function getSimilarTV(id: number) {
   return fetcher<PaginatedResponse<TVShow>>(`/tv/${id}/similar`)
+}
+
+export async function getTVRecommendations(id: number) {
+  return fetcher<PaginatedResponse<TVShow>>(`/tv/${id}/recommendations`)
+}
+
+export async function getTVReviews(id: number) {
+  return fetcher<ReviewsResponse>(`/tv/${id}/reviews`)
+}
+
+export async function getTVImages(id: number) {
+  return fetcher<ImagesResponse>(`/tv/${id}/images`, {
+    include_image_language: "en,null",
+  })
 }
 
 export async function getTVSeason(tvId: number, seasonNumber: number) {

@@ -1,3 +1,10 @@
+export interface BelongsToCollection {
+  id: number
+  name: string
+  poster_path: string | null
+  backdrop_path: string | null
+}
+
 export interface Movie {
   id: number
   title: string
@@ -13,6 +20,7 @@ export interface Movie {
   tagline?: string
   status?: string
   original_language?: string
+  belongs_to_collection?: BelongsToCollection | null
 }
 
 export interface TVShow {
@@ -101,6 +109,43 @@ export interface Cast {
 
 export interface CreditsResponse {
   cast: Cast[]
+}
+
+export interface Review {
+  id: string
+  author: string
+  content: string
+  created_at: string
+  url: string
+  author_details?: {
+    rating?: number | null
+    avatar_path?: string | null
+  }
+}
+
+export interface ReviewsResponse {
+  page: number
+  results: Review[]
+  total_pages: number
+  total_results: number
+}
+
+export interface Collection {
+  id: number
+  name: string
+  overview: string
+  poster_path: string | null
+  backdrop_path: string | null
+  parts: (Movie | TVShow)[]
+}
+
+export interface CollectionImage {
+  file_path: string
+}
+
+export interface ImagesResponse {
+  backdrops: CollectionImage[]
+  posters: CollectionImage[]
 }
 
 export type MediaType = "movie" | "tv"
