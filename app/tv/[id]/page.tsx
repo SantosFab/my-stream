@@ -1,13 +1,12 @@
 import Image from "next/image"
-import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getTVDetails, getTVCredits, getSimilarTV, getTVSeason, getImageUrl } from "@/lib/tmdb"
-import { Badge, Separator, buttonVariants } from "@/components/ui"
+import { Badge, Separator } from "@/components/ui"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { PlayIcon, StarIcon, Calendar01Icon } from "@hugeicons/core-free-icons"
+import { StarIcon, Calendar01Icon } from "@hugeicons/core-free-icons"
 import { MediaRow } from "@/components/media-row"
 import { SeasonEpisodeLoader } from "@/components/season-episode-loader"
-import { cn } from "@/lib/utils"
+import { ResumeWatchButton } from "@/components/resume-watch-button"
 
 type TVPageProps = {
   params: Promise<{ id: string }>
@@ -79,15 +78,11 @@ export default async function TVDetailPage({ params }: TVPageProps) {
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground max-w-2xl">{tv.overview}</p>
             {firstSeason && (
-              <div className="mt-2">
-                <Link
-                  href={`/watch/tv/${tv.id}?season=${firstSeason.season_number}&episode=1`}
-                  className={cn(buttonVariants({ size: "lg" }), "gap-2")}
-                >
-                  <HugeiconsIcon icon={PlayIcon} strokeWidth={1.5} className="size-4" />
-                  Watch Now
-                </Link>
-              </div>
+              <ResumeWatchButton
+                type="tv"
+                id={tv.id}
+                defaultHref={`/watch/tv/${tv.id}?season=${firstSeason.season_number}&episode=1`}
+              />
             )}
           </div>
         </div>

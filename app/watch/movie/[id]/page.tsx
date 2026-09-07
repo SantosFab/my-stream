@@ -2,6 +2,7 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { getMovieDetails, getImageUrl } from "@/lib/tmdb"
 import { VideoPlayer } from "@/components/video-player"
+import { TrackMovieWatch } from "@/components/track-watch"
 import { Badge, buttonVariants } from "@/components/ui"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowLeft01Icon, StarIcon, Clock01Icon } from "@hugeicons/core-free-icons"
@@ -36,6 +37,12 @@ export default async function WatchMoviePage({ params }: WatchMoviePageProps) {
       </div>
 
       <VideoPlayer type="movie" id={movieId} />
+      <TrackMovieWatch
+        id={movie.id}
+        title={movie.title}
+        poster_path={movie.poster_path}
+        backdrop_path={movie.backdrop_path}
+      />
 
       <div className="flex gap-4 flex-col sm:flex-row">
         {posterUrl && (

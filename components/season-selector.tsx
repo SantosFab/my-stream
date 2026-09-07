@@ -94,7 +94,7 @@ export function SeasonSelector({
                   )}
                   <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{ep.overview}</p>
                   <div className="mt-auto">
-                    <Link
+                      <Link
                       href={`/watch/tv/${tvId}?season=${selectedSeasonValue}&episode=${ep.episode_number}`}
                       className={cn(buttonVariants({ size: "sm" }), "gap-1.5 h-7 text-xs")}
                     >

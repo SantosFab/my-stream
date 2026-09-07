@@ -1,12 +1,11 @@
 import Image from "next/image"
-import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getMovieDetails, getMovieCredits, getSimilarMovies, getImageUrl } from "@/lib/tmdb"
-import { Badge, Separator, buttonVariants } from "@/components/ui"
+import { Badge, Separator } from "@/components/ui"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { PlayIcon, StarIcon, Clock01Icon, Calendar01Icon } from "@hugeicons/core-free-icons"
+import { StarIcon, Clock01Icon, Calendar01Icon } from "@hugeicons/core-free-icons"
 import { MediaRow } from "@/components/media-row"
-import { cn } from "@/lib/utils"
+import { ResumeWatchButton } from "@/components/resume-watch-button"
 
 type MoviePageProps = {
   params: Promise<{ id: string }>
@@ -84,15 +83,11 @@ export default async function MoviePage({ params }: MoviePageProps) {
               )}
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground max-w-2xl">{movie.overview}</p>
-            <div className="mt-2">
-              <Link
-                href={`/watch/movie/${movie.id}`}
-                className={cn(buttonVariants({ size: "lg" }), "gap-2")}
-              >
-                <HugeiconsIcon icon={PlayIcon} strokeWidth={1.5} className="size-4" />
-                Watch Now
-              </Link>
-            </div>
+            <ResumeWatchButton
+              type="movie"
+              id={movie.id}
+              defaultHref={`/watch/movie/${movie.id}`}
+            />
           </div>
         </div>
 

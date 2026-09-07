@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic"
 
 import { HeroBanner } from "@/components/hero-banner"
 import { MediaRow } from "@/components/media-row"
+import { ContinueWatching } from "@/components/continue-watching"
 import {
   getTrendingMovies,
   getTrendingTV,
@@ -36,6 +37,7 @@ export default async function HomePage() {
     <main>
       {heroDetails && <HeroBanner item={heroDetails} type="movie" />}
       <div className="mx-auto max-w-7xl flex flex-col gap-10 px-4 py-10">
+        <ContinueWatching />
         <MediaRow
           title="Trending Movies"
           items={trendingMovies.results}

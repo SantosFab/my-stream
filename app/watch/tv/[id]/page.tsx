@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getTVDetails, getTVSeason, getImageUrl } from "@/lib/tmdb";
 import { VideoPlayer } from "@/components/video-player";
+import { TrackTVWatch } from "@/components/track-watch";
 import { Badge, buttonVariants } from "@/components/ui";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -167,6 +168,15 @@ export default async function WatchTVPage({
         id={tvId}
         season={seasonNum}
         episode={episodeNum}
+      />
+      <TrackTVWatch
+        id={tv.id}
+        name={tv.name}
+        poster_path={tv.poster_path}
+        backdrop_path={tv.backdrop_path}
+        season={seasonNum}
+        episode={episodeNum}
+        episodeName={currentEpisode?.name}
       />
 
       <div className="flex flex-wrap items-center gap-2">
