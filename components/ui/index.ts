@@ -1,6 +1,18 @@
 export { Badge } from "./badge"
 export { Button } from "./button"
 export { buttonVariants } from "./button-variants"
+export {
+  Dialog,
+  DialogTrigger,
+  DialogPortal,
+  DialogClose,
+  DialogBackdrop,
+  DialogPopup,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from "./dialog"
 export { Input } from "./input"
 export {
   Select,
@@ -15,6 +27,17 @@ export {
   SelectScrollDownButton,
 } from "./select"
 export { Separator } from "./separator"
+export {
+  Sheet,
+  SheetTrigger,
+  SheetClose,
+  SheetPortal,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  sheetVariants,
+} from "./sheet"
 export {
   Tabs,
   TabsList,

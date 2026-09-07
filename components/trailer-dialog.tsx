@@ -1,10 +1,10 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useState } from "react"
 import Image from "next/image"
-import { Button } from "@/components/ui"
+import { Button, Dialog, DialogPopup, DialogTitle } from "@/components/ui"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { PlayIcon, Cancel01Icon } from "@hugeicons/core-free-icons"
+import { PlayIcon } from "@hugeicons/core-free-icons"
 import type { Video } from "@/lib/types"
 
 function pickTrailer(videos: Video[]): Video | null {
@@ -23,63 +23,32 @@ export function TrailerDialog({ videos }: { videos: Video[] }) {
   const [open, setOpen] = useState(false)
   const trailer = pickTrailer(videos)
 
-  const close = useCallback(() => setOpen(false), [])
-
-  useEffect(() => {
-    if (!open) return
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") close()
-    }
-    window.addEventListener("keydown", onKey)
-    document.body.style.overflow = "hidden"
-    return () => {
-      window.removeEventListener("keydown", onKey)
-      document.body.style.overflow = ""
-    }
-  }, [open, close])
-
   if (!trailer) return null
 
   return (
-    <div>
+    <Dialog open={open} onOpenChange={setOpen}>
       <Button variant="outline" onClick={() => setOpen(true)} className="gap-2">
         <HugeiconsIcon icon={PlayIcon} strokeWidth={1.5} className="size-4" />
         Watch Trailer
       </Button>
 
-      {open && (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4"
-          onClick={close}
-          role="dialog"
-          aria-modal="true"
-          aria-label={`Trailer: ${trailer.name}`}
-        >
-          <div
-            className="relative w-full max-w-4xl overflow-hidden rounded-lg bg-black"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              type="button"
-              onClick={close}
-              aria-label="Close trailer"
-              className="absolute right-2 top-2 z-10 rounded-md bg-black/60 p-1.5 text-white hover:bg-black/80"
-            >
-              <HugeiconsIcon icon={Cancel01Icon} strokeWidth={1.5} className="size-4" />
-            </button>
-            <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
-              <iframe
-                src={`https://www.youtube-nocookie.com/embed/${trailer.key}?autoplay=1&rel=0`}
-                title={trailer.name}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="absolute inset-0 h-full w-full"
-              />
-            </div>
-          </div>
+      <DialogPopup className="max-w-4xl gap-0 overflow-hidden bg-black p-0">
+        <DialogTitle className="sr-only">
+          Trailer: {trailer.name}
+        </DialogTitle>
+        <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+          {open && (
+            <iframe
+              src={`https://www.youtube-nocookie.com/embed/${trailer.key}?autoplay=1&rel=0`}
+              title={trailer.name}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="absolute inset-0 h-full w-full"
+            />
+          )}
         </div>
-      )}
-    </div>
+      </DialogPopup>
+    </Dialog>
   )
 }
 

@@ -1,18 +1,21 @@
 "use client"
 
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui"
 
-type MeState =
+export type TmdbMeState =
   | { status: "loading" }
   | { status: "out" }
   | { status: "in"; username: string }
 
-export function TmdbAuthButton() {
+export function useTmdbMe(): {
+  me: TmdbMeState
+  signOut: () => Promise<void>
+} {
   const router = useRouter()
-  const [me, setMe] = useState<MeState>({ status: "loading" })
+  const [me, setMe] = useState<TmdbMeState>({ status: "loading" })
 
   useEffect(() => {
     let cancelled = false
@@ -34,11 +37,17 @@ export function TmdbAuthButton() {
     }
   }, [])
 
-  async function handleLogout() {
+  const signOut = useCallback(async () => {
     await fetch("/api/auth/tmdb/logout", { method: "POST" }).catch(() => null)
     setMe({ status: "out" })
     router.refresh()
-  }
+  }, [router])
+
+  return { me, signOut }
+}
+
+export function TmdbAuthButton() {
+  const { me, signOut } = useTmdbMe()
 
   if (me.status === "loading") return null
 
@@ -74,7 +83,7 @@ export function TmdbAuthButton() {
       <span className="max-w-24 truncate text-xs text-muted-foreground">
         {me.username}
       </span>
-      <Button size="sm" variant="ghost" onClick={handleLogout}>
+      <Button size="sm" variant="ghost" onClick={signOut}>
         Sign out
       </Button>
     </div>
