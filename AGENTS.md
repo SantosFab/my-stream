@@ -93,6 +93,10 @@ them through an external embed player. Single-user, private site.
 - Navbar `components/navbar.tsx`: desktop links + inline search + TMDB
   status; mobile = hamburger → right `Sheet` drawer (search, Browse,
   My Library incl. Watchlist/Favorites, TMDB connect/user, site sign-out).
+  `useTmdbMe()` is called once in `Navbar` and passed down, so a TMDB
+  sign-out updates every part at once. Watchlist/Favorites (desktop links
+  and mobile My Library) render only when TMDB is connected. The TMDB user
+  is a `DropdownMenu` (`components/ui/dropdown-menu.tsx`) with Sign out.
 - `/watchlist`, `/favorites`: server pages (`force-dynamic`), `?type=` tabs
   + `PaginationControls`; logged-out → `ConnectTmdbPrompt`.
 - `/movies`, `/tv`: pure-Discover server pages (`force-dynamic`), no category
