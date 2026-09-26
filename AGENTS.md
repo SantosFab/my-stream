@@ -39,15 +39,24 @@ them through an external embed player. Single-user, private site.
 ## Auth model (two independent layers)
 
 1. **Site gate** — single shared password, no per-user accounts.
-   `middleware.ts` protects everything except `/login`, `/api/auth/*` and
-   static assets (pages → redirect `/login?next=…`, APIs → 401).
-   `POST /api/auth/login` compares SHA-256 timing-safe, sets httpOnly
-   `site-auth` (`v1.<rand>.<hmac>`, 30d). `POST /api/auth/logout` clears it.
+   `middleware.ts` protects everything except `/login`, `/api/auth/login`,
+   `/api/auth/logout` and static assets (pages → redirect `/login?next=…`,
+   APIs → 401). The TMDB connect routes are **not** public.
+   `POST /api/auth/login` compares SHA-256 timing-safe, is rate limited
+   (`lib/rate-limit.ts`: 5/IP + 30 global per 15 min) and sets httpOnly
+   `site-auth` (`v2.<rand>.<issuedAt>.<hmac>`); expiry (30d) is enforced
+   server-side, so a copied cookie dies after 30d. Rotating `SITE_AUTH_SECRET`
+   signs everyone out. `POST /api/auth/logout` clears it. `?next=` is
+   validated as same-origin before redirecting.
+   Defence in depth: `lib/site-session.ts` re-checks the cookie in
+   `app/(site)/layout.tsx` and at the top of every protected API route.
    Helpers: `lib/site-auth.ts` (WebCrypto only — must stay Edge-safe for middleware).
 2. **TMDB login** (optional, per browser) — official flow
    `token/new → themoviedb.org/authenticate → session/new`:
-   `GET /api/auth/tmdb/start` → `GET /api/auth/tmdb/callback`
-   (stores httpOnly `tmdb-session` + readable `tmdb-user`, 30d) →
+   `GET /api/auth/tmdb/start` (stores the request token in a 10-min httpOnly
+   `tmdb-request-token` cookie) → `GET /api/auth/tmdb/callback` (rejects a
+   token that doesn't match that cookie — login CSRF guard; stores httpOnly
+   `tmdb-session` + readable `tmdb-user`, 30d) →
    `POST /api/auth/tmdb/logout` (also `DELETE /authentication/session`).
    `session_id` **never reaches the browser**; all account calls go through
    `app/api/tmdb/*` proxies (`me`, `states`, `toggle`, `rating`, `list`).

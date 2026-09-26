@@ -16,7 +16,7 @@ const nextConfig = {
         headers: [
           {
             key: "Content-Security-Policy",
-            value: "frame-src 'self' https://vidlink.pro https://vsembed.ru https://theajack.github.io;"
+            value: "frame-src 'self' https://vsembed.ru https://theajack.github.io;"
           }
         ],
       },

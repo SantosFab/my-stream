@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server"
 import {
+  SESSION_MAX_AGE_SECONDS,
   createSessionValue,
   getCookieName,
   verifyPassword,
 } from "@/lib/site-auth"
 import { createRateLimiter } from "@/lib/rate-limit"
 
-const THIRTY_DAYS = 60 * 60 * 24 * 30
 const FIFTEEN_MINUTES = 15 * 60 * 1000
 
 const attemptsPerIp = createRateLimiter({ limit: 5, windowMs: FIFTEEN_MINUTES })
@@ -71,7 +71,7 @@ export async function POST(req: Request) {
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: THIRTY_DAYS,
+    maxAge: SESSION_MAX_AGE_SECONDS,
   })
   return res
 }

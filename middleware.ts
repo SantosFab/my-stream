@@ -2,14 +2,15 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 import { getCookieName, verifySessionValue } from "@/lib/site-auth"
 
-const PUBLIC_PATHS = ["/login", "/favicon.ico"]
+// The TMDB connect flow (/api/auth/tmdb/*) is deliberately not public: it
+// spends the site's TMDB token and must only run for signed-in visitors.
+const PUBLIC_PATHS = ["/login", "/favicon.ico", "/api/auth/login", "/api/auth/logout"]
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
 
   if (
     pathname.startsWith("/_next/") ||
-    pathname.startsWith("/api/auth/") ||
     PUBLIC_PATHS.includes(pathname) ||
     pathname.match(/\.(ico|png|jpg|jpeg|svg|gif|webp|css|js|map)$/)
   ) {
