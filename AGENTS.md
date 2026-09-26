@@ -86,7 +86,8 @@ them through an external embed player. Single-user, private site.
   Cross-origin iframe ⇒ **exact timestamp resume is impossible**; checkpoint
   is episode-level by design.
 - Cards: `MediaCard` (all grids) + `ContinueWatching` cards both embed
-  `FavoriteHeartButton` — heart top-right, **always visible** (hover-only is
+  `FavoriteHeartButton` — heart top-right (bottom-right on `ContinueWatching`
+  cards, whose top-right holds the remove X), **always visible** (hover-only is
   banned: broken on mobile), red filled (`fill="currentColor"`) when
   favorited; hidden entirely when TMDB not connected. Clicks
   `preventDefault` + `stopPropagation` (cards are links).
