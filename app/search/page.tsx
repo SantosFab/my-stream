@@ -1,18 +1,21 @@
 export const dynamic = "force-dynamic"
 
+import { Suspense } from "react"
 import { searchMulti } from "@/lib/tmdb"
 import { MediaCard } from "@/components/media-card"
+import { PaginationControls } from "@/components/pagination-controls"
 import type { SearchResult, Movie, TVShow } from "@/lib/types"
 
 type SearchPageProps = {
-  searchParams: Promise<{ q?: string }>
+  searchParams: Promise<{ q?: string; page?: string }>
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const { q } = await searchParams
+  const { q, page: pageStr } = await searchParams
   const query = q?.trim() ?? ""
+  const page = Math.max(1, Number(pageStr) || 1)
 
-  const results = query ? await searchMulti(query) : null
+  const results = query ? await searchMulti(query, page) : null
 
   const mediaItems = results?.results.filter(
     (r): r is SearchResult & { media_type: "movie" | "tv" } =>
@@ -28,6 +31,11 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         {results && (
           <p className="text-muted-foreground text-sm mt-1">
             {results.total_results.toLocaleString()} results
+            {results.total_pages > 1 && (
+              <>
+                {" "}&middot; page {results.page} of {Math.min(results.total_pages, 500)}
+              </>
+            )}
           </p>
         )}
       </div>
@@ -52,6 +60,12 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             />
           ))}
         </div>
+      )}
+
+      {results && (
+        <Suspense>
+          <PaginationControls currentPage={page} totalPages={results.total_pages} />
+        </Suspense>
       )}
     </main>
   )
