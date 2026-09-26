@@ -150,6 +150,22 @@ export interface ImagesResponse {
 
 export type MediaType = "movie" | "tv"
 
+export interface PersonKnownFor {
+  id: number
+  media_type: MediaType
+  title?: string
+  name?: string
+}
+
+export interface Person {
+  id: number
+  name: string
+  profile_path: string | null
+  known_for_department: string
+  popularity: number
+  known_for: PersonKnownFor[]
+}
+
 export interface SearchResult {
   id: number
   media_type: MediaType

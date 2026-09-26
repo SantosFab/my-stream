@@ -11,6 +11,7 @@ import type {
   ReviewsResponse,
   Collection,
   ImagesResponse,
+  Person,
 } from "./types"
 
 const BASE_URL = "https://api.themoviedb.org/3"
@@ -172,6 +173,13 @@ export async function searchMovies(query: string, page = 1) {
 
 export async function searchTV(query: string, page = 1) {
   return fetcher<PaginatedResponse<TVShow>>("/search/tv", {
+    query,
+    page: String(page),
+  })
+}
+
+export async function searchPeople(query: string, page = 1) {
+  return fetcher<PaginatedResponse<Person>>("/search/person", {
     query,
     page: String(page),
   })
