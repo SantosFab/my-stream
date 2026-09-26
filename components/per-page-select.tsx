@@ -1,41 +1,16 @@
-"use client"
+import { ParamSelect } from "@/components/param-select"
+import { DEFAULT_PER_PAGE, PER_PAGE_OPTIONS } from "@/lib/pagination"
 
-import { useRouter, useSearchParams } from "next/navigation"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui"
+const OPTIONS = PER_PAGE_OPTIONS.map((o) => ({ value: String(o), label: `${o} per page` }))
 
-type PerPageSelectProps = {
-  value: number
-  options: readonly number[]
-  defaultValue: number
-}
-
-export function PerPageSelect({ value, options, defaultValue }: PerPageSelectProps) {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-
-  function handleChange(next: string | null) {
-    const params = new URLSearchParams(searchParams.toString())
-    if (!next || Number(next) === defaultValue) {
-      params.delete("per_page")
-    } else {
-      params.set("per_page", next)
-    }
-    params.delete("page")
-    router.push(`?${params.toString()}`)
-  }
-
+export function PerPageSelect({ value }: { value: number }) {
   return (
-    <Select value={String(value)} onValueChange={handleChange}>
-      <SelectTrigger className="w-32">
-        <SelectValue>{value} per page</SelectValue>
-      </SelectTrigger>
-      <SelectContent>
-        {options.map((o) => (
-          <SelectItem key={o} value={String(o)}>
-            {o} per page
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <ParamSelect
+      param="per_page"
+      value={String(value)}
+      defaultValue={String(DEFAULT_PER_PAGE)}
+      options={OPTIONS}
+      className="w-32"
+    />
   )
 }
