@@ -7,6 +7,7 @@ import { PersonCard } from "@/components/person-card"
 import { PaginationControls } from "@/components/pagination-controls"
 import { PerPageSelect } from "@/components/per-page-select"
 import { AccountListTabs } from "@/components/account-list-shared"
+import { DEFAULT_PER_PAGE, parsePage, parsePerPage } from "@/lib/pagination"
 import type { Movie, PaginatedResponse, Person, TVShow } from "@/lib/types"
 
 const SEARCH_TABS = [
@@ -19,8 +20,6 @@ type SearchType = (typeof SEARCH_TABS)[number]["value"]
 
 const TMDB_PAGE_SIZE = 20
 const TMDB_MAX_PAGE = 500
-const PER_PAGE_OPTIONS = [20, 40, 60] as const
-const DEFAULT_PER_PAGE = 20
 
 type SitePage<T> = {
   results: T[]
@@ -68,9 +67,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const searchType: SearchType = SEARCH_TABS.some((t) => t.value === type)
     ? (type as SearchType)
     : "movie"
-  const perPage = PER_PAGE_OPTIONS.find((o) => o === Number(perPageStr)) ?? DEFAULT_PER_PAGE
+  const perPage = parsePerPage(perPageStr)
   const maxSitePage = Math.ceil(TMDB_MAX_PAGE / (perPage / TMDB_PAGE_SIZE))
-  const page = Math.min(Math.max(1, Number(pageStr) || 1), maxSitePage)
+  const page = parsePage(pageStr, maxSitePage)
 
   let media: SitePage<Movie | TVShow> | null = null
   let people: SitePage<Person> | null = null
@@ -121,11 +120,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             tabs={SEARCH_TABS}
           />
           <Suspense>
-            <PerPageSelect
-              value={perPage}
-              options={PER_PAGE_OPTIONS}
-              defaultValue={DEFAULT_PER_PAGE}
-            />
+            <PerPageSelect value={perPage} />
           </Suspense>
         </div>
       )}

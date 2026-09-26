@@ -1,4 +1,5 @@
 import Image from "next/image"
+import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getMovieDetails, getMovieCredits, getSimilarMovies, getMovieRecommendations, getMovieVideos, getMovieReviews, getCollection, getImageUrl } from "@/lib/tmdb"
 import { Badge, Separator } from "@/components/ui"
@@ -114,15 +115,19 @@ export default async function MoviePage({ params }: MoviePageProps) {
                 {topCast.map((person) => {
                   const profileUrl = getImageUrl(person.profile_path, "w185")
                   return (
-                    <div key={person.id} className="flex flex-col gap-1 items-center text-center">
+                    <Link
+                      key={person.id}
+                      href={`/person/${person.id}`}
+                      className="group flex flex-col gap-1 items-center text-center"
+                    >
                       <div className="relative size-16 overflow-hidden rounded-full bg-muted">
                         {profileUrl && (
                           <Image src={profileUrl} alt={person.name} fill sizes="64px" className="object-cover" />
                         )}
                       </div>
-                      <p className="text-xs font-medium line-clamp-1">{person.name}</p>
+                      <p className="text-xs font-medium line-clamp-1 group-hover:underline">{person.name}</p>
                       <p className="text-xs text-muted-foreground line-clamp-1">{person.character}</p>
-                    </div>
+                    </Link>
                   )
                 })}
               </div>
