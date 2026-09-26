@@ -40,8 +40,13 @@ them through an external embed player. Single-user, private site.
 
 1. **Site gate** — single shared password, no per-user accounts.
    `middleware.ts` protects everything except `/login`, `/api/auth/login`,
-   `/api/auth/logout` and static assets (pages → redirect `/login?next=…`,
-   APIs → 401). The TMDB connect routes are **not** public.
+   `/api/auth/logout` and `/_next/*` + `favicon.ico` (excluded by path prefix in
+   `config.matcher` — never by file extension); pages → redirect
+   `/login?next=…`, APIs → 401. The TMDB connect routes are **not** public.
+   It also rejects (403) any non-GET request whose `Origin` isn't this host.
+   Global security headers (X-Frame-Options/frame-ancestors, nosniff,
+   Referrer-Policy, HSTS in prod, no X-Powered-By) live in `next.config.mjs`;
+   the `/watch` CSP overrides the global one, so it repeats `frame-ancestors`.
    `POST /api/auth/login` compares SHA-256 timing-safe, is rate limited
    (`lib/rate-limit.ts`: 5/IP + 30 global per 15 min) and sets httpOnly
    `site-auth` (`v2.<rand>.<issuedAt>.<hmac>`); expiry (30d) is enforced
