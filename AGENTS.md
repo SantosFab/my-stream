@@ -68,15 +68,19 @@ them through an external embed player. Single-user, private site.
 
 ## Feature inventory (where things live)
 
-- Home `app/page.tsx`: `HeroBanner` + `ContinueWatching` + `MediaRow`s.
-- Detail `app/movie/[id]/page.tsx`, `app/tv/[id]/page.tsx`: backdrop/poster
+- Layouts: root `app/layout.tsx` = fonts + `ThemeProvider` only. Every
+  protected page lives in the route group `app/(site)/` (not part of the URL),
+  whose `layout.tsx` adds `FavoritesProvider` + `Navbar`. `/login` stays
+  outside the group so it renders without the navbar.
+- Home `app/(site)/page.tsx`: `HeroBanner` + `ContinueWatching` + `MediaRow`s.
+- Detail `app/(site)/movie/[id]/page.tsx`, `app/(site)/tv/[id]/page.tsx`: backdrop/poster
   header, `ResumeWatchButton` (shows `Continue S2 E5` from localStorage),
   `TrailerDialog`, `AccountToggles` (Favorite/Watchlist/rating via proxy,
   optimistic + `Connect TMDB` fallback), Cast, Seasons (`SeasonEpisodeLoader`
   → `/api/tv/[id]/season/[season]`), Similar → Collection (`More From …`,
   movies only) → Recommendations (`You May Also Like`) → `ReviewsSection`.
   Sections render only when data exists.
-- Watch `app/watch/movie|tv/[id]/page.tsx`: external iframe player
+- Watch `app/(site)/watch/movie|tv/[id]/page.tsx`: external iframe player
   (`components/video-player.tsx`, vsembed) + `TrackMovieWatch`/`TrackTVWatch`
   (`components/track-watch.tsx`) which persist the checkpoint on view.
   Cross-origin iframe ⇒ **exact timestamp resume is impossible**; checkpoint
