@@ -121,13 +121,3 @@ them through an external embed player. Single-user, private site.
 - Reuse `MediaCard`/`MediaRow`/shadcn primitives; don't hand-roll
   modals/drawers (use `ui/dialog`, `ui/sheet`).
 - Session/cookie code must stay Edge-compatible (WebCrypto, no `node:crypto`).
-
-## Known pending (as of 2026-09-07)
-
-- Discover filters done (year, rating, runtime, full `sort_by`, multi-genre
-  AND/OR, metadata) but **uncommitted** — verify + commit on request.
-  Deliberately out of scope: `certification*` (needs `region`), watch
-  providers (needs `watch_region` + provider list), cast/crew/people/keywords
-  (needs autocomplete), free min/max runtime inputs.
-- shadcn migration (`ui/dialog`, `ui/sheet`, navbar, trailer) implemented but
-  **uncommitted** — verify + commit on request.
